@@ -22,7 +22,7 @@ df_growth_1503 = ts.get_growth_data(2015,3)
 
 #detail_daily={}
 
-engine = create_engine('mysql://root:6598518@127.0.0.1/stock?charset=utf8')
+engine = create_engine('mysql://root:123456@127.0.0.1/stock?charset=utf8')
 
 
 for row_index, row in df_base.iterrows():

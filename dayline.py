@@ -19,7 +19,7 @@ df_base = ts.get_stock_basics()
 
 control_num=0
 
-engine = create_engine('mysql://root:6598518@127.0.0.1/stock?charset=utf8')
+engine = create_engine('mysql://root:123456@127.0.0.1/stock?charset=utf8')
 
 def getDayLine(from_num, to_num, endDay):
 

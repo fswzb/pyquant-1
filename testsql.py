@@ -17,7 +17,7 @@ stocknum = '600572'
 #df.insert(0,'date','2012-01-11')
 #
 #df.head()
-#engine = create_engine('mysql://root:6598518@127.0.0.1/stock?charset=utf8')
+#engine = create_engine('mysql://root:123456@127.0.0.1/stock?charset=utf8')
 
 #df.to_sql('sh' + stocknum,engine,if_exists='append')
 
@@ -25,7 +25,7 @@ df_his_all = ts.get_h_data(stocknum, retry_count=10, pause=1)
 
 
 df_his_all.head()
-engine = create_engine('mysql://root:6598518@127.0.0.1/stock?charset=utf8')
+engine = create_engine('mysql://root:123456@127.0.0.1/stock?charset=utf8')
 
 df_his_all.to_sql('s' + stocknum,engine,if_exists='append')
 
