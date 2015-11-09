@@ -26,8 +26,8 @@ control_num=0
 
 engine = create_engine('mysql://root:123456@127.0.0.1/stock?charset=utf8')
 
-def getDayLine(from_num, to_num,startDay = 0, endDay = time.strftime('%Y-%m-%d', time.localtime())):
-
+def getDayLine(from_num = 0, to_num = len(df_base.index),startDay = 0, endDay = time.strftime('%Y-%m-%d', time.localtime())):
+#download all day line by default
     global df_base, control_num, engine
     for row_index, row in df_base.iterrows():
         try:
@@ -49,7 +49,7 @@ def getDayLine(from_num, to_num,startDay = 0, endDay = time.strftime('%Y-%m-%d',
                 qfq_history= ts.get_h_data(stocknum, start = startDay, end = endDay, retry_count=10)
                 qfq_history.insert(0,'stocknum',stocknum)
                 qfq_history.to_sql('qfq_day',engine,if_exists='append')
-            control_num += 1
+            
         
     
         except:
@@ -58,17 +58,22 @@ def getDayLine(from_num, to_num,startDay = 0, endDay = time.strftime('%Y-%m-%d',
             f.write(s)
             f.close()
             pass
+        
+        finally:
+            control_num += 1
+            
 def recoveDayline(startDay, endDay):
     global df_base, control_num, engine
     if os.path.exists('qfq_err' + endDay):
         f = open('qfq_err' + endDay)
         lines = f.readlines()
         lineNos = range(len(lines))
+        newlines = []
         
         for lineNo in lineNos:
             try:
                 
-                line = lines[0]
+                line = lines[lineNo]
                 stocknum = line[:6]
                 if startDay == 0:
                     timeToMarket = df_base.ix[stocknum]['timeToMarket']
@@ -77,14 +82,21 @@ def recoveDayline(startDay, endDay):
                 qfq_history = ts.get_h_data(stocknum, start = startDay, end = endDay, retry_count=10)
                 qfq_history.insert(0,'stocknum',stocknum)
                 qfq_history.to_sql('qfq_day',engine,if_exists='append')
-                del lines[0] #delect the recovered data
-                print(lineNo)
+                lines[lineNo] = 0 #delect it afterwards in order to put in to new logfile
+                
                 
             except:
-                f.close()
-                f = open('qfq_err' + endDay, 'w')
-                f.writelines(lines)
-                f.close()
+                pass
+            
+                
+        for line in lines:
+            if line is not 0:
+                newlines.append(line)
+        f.close()        
+        f = open('qfq_err1' + endDay, 'w') # generate new log file
+        f.writelines(newlines)
+        f.close()
+                
         if os.path.getsize('qfq_err' + endDay) == 0: 
             os.remove('qfq_err' + endDay)
             
