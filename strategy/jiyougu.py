@@ -15,7 +15,8 @@
         #  base_info.loc[i,u'tradeble'] = 1
 
 
-def cser(base_info):
+def jiyougu(base_info):
     base_info = base_info[base_info.pb > 0]
-    base_info[u'factor'] = base_info.totals * base_info.pb * base_info.pb * base_info.price
+    base_info = base_info[base_info.pe > 0]
+    base_info[u'factor'] = base_info.totals * base_info.pb * base_info.pe
     return base_info.sort([u'factor'])[:10]
