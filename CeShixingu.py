@@ -41,3 +41,21 @@ for row_index, row in newly_issued.iterrows():
             
     except:
         pass
+    
+    
+data_b[u'nextopen'] = data_b.groupby(u'code')[u'open'].shift(1)
+data_b[u'preclose'] = data_b.groupby(u'code')[u'close'].shift(-1)
+
+data_b[u'yiziban'] = data_b.low - data_b.high
+
+for row_index, row in data_b.iterrows():
+    if data_b.loc[i,u'yiziban'] != 0:
+        data_b.loc[i,u'yiziban'] = -1
+    elif data_b.loc[i,u'open'] > data_b.loc[i,u'preclose']:
+        data_b.loc[i,u'yiziban'] = 1
+
+#data_b[data_b.yiziban != 0]
+#
+#for i in data_b.index:
+#    if 
+    
