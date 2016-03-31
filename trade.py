@@ -9,8 +9,6 @@ class trade(object):
         self.feed = feed
         self.user = user
         self.LOGPATH = '/home/way/logs/'
-
-
     def start(self):
         size = len(self.feed)
         while True:
@@ -28,17 +26,14 @@ class trade(object):
                 for stock in position:
                     if int(stock['current_amount']) > 0:
                         holdstock.append(stock['stock_code'])
-    
                 if reserve_amount < size * 10000:
-                    MASSAGE = '"%s": There is no enough to start the trade\n' %(start_time)
+                    MASSAGE = '"%s": There is no enough money to start the trade or the trading finished\n' %(start_time)
                     ERR_LOG.write(MASSAGE)
                     ERR_LOG.close()
                     break
-                elif 'entrust_no' in enlist[0]:
+                elif not type(enlist) is dict:
                     for en in enlist:
                         self.user.cancel_entrust(en['entrust_no'])
-                    
-    
                 else:
                     share = reserve_amount / size
                     for stock in self.feed:
@@ -51,12 +46,17 @@ class trade(object):
                             MASSAGE = '%s,%s,%f,%d,buy\n' %(start_time, stock, last_price, quantity)
                             TRADE_LOG.write(MASSAGE)
                     TRADE_LOG.close()
+                    time.sleep(5)
             except:
                 pass
 
     def stop(self):
+        n = 1
         while True:
             try:
+                n += 1
+                if n >= 15:
+                    break
                 position = self.user.position
                 err_log = self.LOGPATH + 'err.log'
                 trade_log = self.LOGPATH + 'trade.log'
@@ -69,21 +69,18 @@ class trade(object):
                 market_value = balance[0]['market_value']
                 TRADE_LOG = open(trade_log, 'a')
                 enlist = self.user.entrust
-    
                 if market_value / account_amount * 100 < 3:
                     MASSAGE = '"%s": stocks have been clearred\n' %(stop_time)
-                    
                     ERR_LOG.write(MASSAGE)
                     ERR_LOG.close()
                     break
                 elif not type(enlist) is dict:
                     for en in enlist:
                         self.user.cancel_entrust(en['entrust_no'])
-    
+
                 else:
                     for term in position:
                         if term['stock_code'] in self.feed:
-    
                             quotes = ts.get_realtime_quotes(term['stock_code'])
                             price = float(quotes.loc[[0], 'price']) * 100 # the price for one hand, 100 share
                             pre_close = float(quotes.loc[[0], 'price']) * 100
@@ -94,12 +91,10 @@ class trade(object):
                                 last_price = price / 100
                                 quantity = int(term['enable_amount'])
                                 if quantity > 0:
-                                
                                     self.user.sell(term['stock_code'], price=last_price, amount=quantity)
                                     MASSAGE = '%s,%s,%f,%d,sell\n' %(stop_time, term['stock_code'], last_price, quantity)
                                     TRADE_LOG.write(MASSAGE)
                     TRADE_LOG.close()
-                                
-                    time.sleep(2)
+                    time.sleep(5)
             except:
                 pass

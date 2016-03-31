@@ -18,7 +18,6 @@ import stockpool
 from strategy import cser
 import feed
 import multiprocessing
-
 from tradable import *
 
 def chiyou(trade,limit):
@@ -50,6 +49,22 @@ def kaicang(trade,limit):
                 break
         except:
             pass
+def account_info(user):
+    global account_flag
+    filep = '/home/way/logs/account'
+    while Ture:
+        now_time = time.localtime()
+        now = (now_time.tm_hour, now_time.tm_min, now_time.tm_sec)
+        stop_time = time.strftime("%Y-%m-%d %H:%M",time.localtime())
+        if now >= (15, 0, 0):
+            balance = self.user.balance
+            account_amount = balance[0]['asset_balance']
+            market_value = balance[0]['market_value']
+            MASSAGE = '%s,%f,%f,%d,\n' %(stop_time, account_amount, market_value, account_flag.read_flag())
+            f = open(filep, 'a')
+            f.write(MASSAGE)
+            f.close()
+            break
 
 
 if not ed.is_holiday_today():
@@ -59,7 +74,7 @@ if not ed.is_holiday_today():
     user.keepalive()
 
     account_flag = flag.flag()
-    limit = zxb_limit.zxb_limit(3.68)
+    limit = zxb_limit.zxb_limit(-1.31)
     #添加trade
     if ed.is_tradetime_now():
         file_name = '/home/way/feed/chicang'
@@ -67,6 +82,8 @@ if not ed.is_holiday_today():
 #        with open(file_name) as f:
 #            yiyue = str(f.readlines()[0])
 
+        m = multiprocessing.Process(target=account_info,args=(user))
+        m.start()
         if account_flag.read_flag() == 2:
             chiyou_feed = feed.feed('chicang')
             chicang_trade = trade.trade(chiyou_feed.load(), user)
