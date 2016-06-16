@@ -9,7 +9,7 @@ len(feeds) return the number of feeds
 class feed(object):
     def __init__(self, feed_type):
         self.feed_type = feed_type
-        self.WKDIR = '/home/way/feed/'
+        self.WKDIR = '/home/way/signal/'
 #make sure your file comes only with stock num, like 000001, and one stock num one line,
 #store the same kind feeds in their respective txt file
         feed_file = self.WKDIR + self.feed_type
