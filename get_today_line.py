@@ -12,3 +12,6 @@ def get_today_line():
     filename = time.strftime('%Y-%m-%d', time.localtime()) + '.csv'
     dirp = '/data/dayline/'
     data.to_csv(dirp+filename,index=False,encoding='gbk')
+
+if __name__ == '__main__':
+    get_today_line()

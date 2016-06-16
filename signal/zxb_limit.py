@@ -17,7 +17,6 @@ class zxb_limit(zxb_index):
         change = self.get_zxb_change()
         if change <= self.limit:
             return True
-            
         else:
             return False
 

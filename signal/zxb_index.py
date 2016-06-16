@@ -12,5 +12,5 @@ class zxb_index(object):
     def get_zxb_change(self):
         self.real_zxb_index = ts.get_realtime_quotes('399101')
 
-        return (float(self.real_zxb_index.price) - float(self.real_zxb_index.pre_close)) / float(self.real_zxb_index.pre_close) * 100
+        return (float(self.real_zxb_index.low) - float(self.real_zxb_index.pre_close)) / float(self.real_zxb_index.pre_close) * 100
 
